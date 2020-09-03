@@ -58,13 +58,12 @@ class NaiveBayes:
             "use_lemmatizer": False,
             "use_stemmer": False,
             "use_singularizer": False,
-            "tf_idf": False
+            "tf_idf": False,
         }
         # update the config with user provided values
         self.config.update(config)
         # initialize empty fitted_models
         self.fitted_models = ()
-        
 
     def train(self, samples: np.array, labels: np.array, verbose: int = 1,) -> np.array:
         """
@@ -182,7 +181,9 @@ class NaiveBayes:
             df: dataframe with predictions from fitted models
         """
         # check that the model has been trained
-        assert self.fitted_models, "Train model first: use train method or restore previous model"
+        assert (
+            self.fitted_models
+        ), "Train model first: use train method or restore previous model"
 
         # make a dataframe from the data
         if labels is not None:
