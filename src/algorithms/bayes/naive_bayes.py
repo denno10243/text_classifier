@@ -1,6 +1,7 @@
 """Trains naive bayes text classification model."""
 
 import copy
+import pickle
 from typing import List, Optional, Tuple
 
 import numpy as np
@@ -249,7 +250,6 @@ class NaiveBayes:
             return df[f"preds_NB_final"].values
 
 
-
     def process_data_iteration(
         self,
         df: pd.DataFrame,
@@ -287,6 +287,32 @@ class NaiveBayes:
             df_iter = stem_text(df_iter, "sample")
 
         return df_iter
+
+
+    def save_model(self, fname: str) -> None:
+        """Saves the object as a pickle file.
+
+        Args:
+            fname: filename to save object as.
+        """
+
+        with open(fname, 'wb') as f:
+            pickle.dump(self.__dict__, f, protocol=4)
+
+
+    def restore_model(self, fname: str) -> None:
+        """Restores the object from a pickle file.
+
+        Args:
+            fname: filename to restore object from.
+        """
+
+        with open(fname, 'rb') as f:
+            obj_attributes = pickle.load(f)
+
+        self.config = obj_attributes["config"]
+        self.stop_words = obj_attributes["stop_words"]
+        self.fitted_models = obj_attributes["fitted_models"]
 
 
 def print_progress(df: pd.DataFrame, pred_col: str, class_col: str) -> None:
