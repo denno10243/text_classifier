@@ -23,7 +23,9 @@ def get_stop_words() -> List:
     return sorted(set(stopwords.words("english")))
 
 
-def remove_stop_words(df: pd.DataFrame, sample_col: str, stop_words: List) -> pd.DataFrame:
+def remove_stop_words(
+    df: pd.DataFrame, sample_col: str, stop_words: List
+) -> pd.DataFrame:
     """Removes the stop words from the comments in a dataframe.
     
     Args:
@@ -78,9 +80,7 @@ def stem_text(df: pd.DataFrame, sample_col: str) -> pd.DataFrame:
     # set stemmer
     ps = PorterStemmer()
     # apply to the text
-    df.loc[:, sample_col] = (
-        df[sample_col].copy(deep=True).str.lower().apply(ps.stem)
-    )
+    df.loc[:, sample_col] = df[sample_col].copy(deep=True).str.lower().apply(ps.stem)
     return df
 
 
@@ -102,10 +102,10 @@ def singularize_text(df: pd.DataFrame, sample_col: str) -> pd.DataFrame:
 
 
 def vectorize_text(
-        df_train: pd.DataFrame,
-        df_test: pd.DataFrame,
-        sample_col: str,
-        tf_idf: bool = False,
+    df_train: pd.DataFrame,
+    df_test: pd.DataFrame,
+    sample_col: str,
+    tf_idf: bool = False,
 ) -> Tuple[np.array, np.array, CountVectorizer]:
     """Vectorizes text, returning a word count for each comment.
 

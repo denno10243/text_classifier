@@ -8,9 +8,14 @@ import pandas as pd
 import scipy
 from sklearn.naive_bayes import MultinomialNB
 
-from src.processing.process_text import (get_stop_words, lemmatize_text,
-                                         remove_stop_words, singularize_text, stem_text,
-                                         vectorize_text)
+from src.processing.process_text import (
+    get_stop_words,
+    lemmatize_text,
+    remove_stop_words,
+    singularize_text,
+    stem_text,
+    vectorize_text,
+)
 from src.utils.training_utils import resample_data
 
 

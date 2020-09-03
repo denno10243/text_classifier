@@ -9,9 +9,14 @@ import pandas as pd
 import scipy
 from sklearn.naive_bayes import MultinomialNB
 
-from src.processing.process_text import (get_stop_words, lemmatize_text,
-                                         remove_stop_words, singularize_text, stem_text,
-                                         vectorize_text)
+from src.processing.process_text import (
+    get_stop_words,
+    lemmatize_text,
+    remove_stop_words,
+    singularize_text,
+    stem_text,
+    vectorize_text,
+)
 from src.utils.training_utils import resample_data
 
 
@@ -47,16 +52,16 @@ class NaiveBayes:
     """
 
     def __init__(
-            self,
-            alpha: float = 0.3,
-            n_splits: int = 5,
-            n_iter: int = 5,
-            upsample: bool = None,
-            use_stop_words: bool = True,
-            use_lemmatizer: bool = False,
-            use_stemmer: bool = False,
-            use_singularizer: bool = False,
-            tf_idf: bool = False,
+        self,
+        alpha: float = 0.3,
+        n_splits: int = 5,
+        n_iter: int = 5,
+        upsample: bool = None,
+        use_stop_words: bool = True,
+        use_lemmatizer: bool = False,
+        use_stemmer: bool = False,
+        use_singularizer: bool = False,
+        tf_idf: bool = False,
     ) -> None:
         """Class Initializer."""
         # make the config
@@ -71,13 +76,7 @@ class NaiveBayes:
         self.config["use_singularizer"] = use_singularizer
         self.config["tf_idf"] = tf_idf
 
-
-    def train(
-        self,
-        samples: np.array,
-        labels: np.array,
-        verbose: int = 1,
-    ) -> np.array:
+    def train(self, samples: np.array, labels: np.array, verbose: int = 1,) -> np.array:
         """
         Trains a classifier on labelled text samples.
 
@@ -176,12 +175,8 @@ class NaiveBayes:
 
         return df[f"preds_NB_final"].values
 
-
     def predict(
-        self,
-        samples: np.array,
-        labels: np.array = None,
-        verbose: int = 1,
+        self, samples: np.array, labels: np.array = None, verbose: int = 1,
     ) -> pd.DataFrame:
         """Performs inference using previously fitted models on text samples.
 
@@ -230,9 +225,7 @@ class NaiveBayes:
                 df[f"preds_NB_{i_iter + 1}_{i_split + 1}"] = preds
                 if verbose == 2:
                     # print sub result
-                    print_progress(
-                        df, f"preds_NB_{i_iter + 1}_{i_split + 1}", "label"
-                    )
+                    print_progress(df, f"preds_NB_{i_iter + 1}_{i_split + 1}", "label")
 
         # get the final prediction: the mode of all the predications
         cols = [
@@ -249,11 +242,7 @@ class NaiveBayes:
             print_progress(df, f"preds_NB_final", "label")
             return df[f"preds_NB_final"].values
 
-
-    def process_data_iteration(
-        self,
-        df: pd.DataFrame,
-    ) -> pd.DataFrame:
+    def process_data_iteration(self, df: pd.DataFrame,) -> pd.DataFrame:
         """Process the data for a training iteration.
 
         Args:
@@ -288,7 +277,6 @@ class NaiveBayes:
 
         return df_iter
 
-
     def save_model(self, fname: str) -> None:
         """Saves the object as a pickle file.
 
@@ -296,9 +284,8 @@ class NaiveBayes:
             fname: filename to save object as.
         """
 
-        with open(fname, 'wb') as f:
+        with open(fname, "wb") as f:
             pickle.dump(self.__dict__, f, protocol=4)
-
 
     def restore_model(self, fname: str) -> None:
         """Restores the object from a pickle file.
@@ -307,7 +294,7 @@ class NaiveBayes:
             fname: filename to restore object from.
         """
 
-        with open(fname, 'rb') as f:
+        with open(fname, "rb") as f:
             obj_attributes = pickle.load(f)
 
         self.config = obj_attributes["config"]

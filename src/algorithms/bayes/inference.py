@@ -5,9 +5,14 @@ from typing import List, Optional, Tuple
 import pandas as pd
 import scipy
 
-from src.processing.process_text import (get_stop_words, lemmatize_text,
-                                         remove_stop_words, singularize_text, stem_text,
-                                         vectorize_text)
+from src.processing.process_text import (
+    get_stop_words,
+    lemmatize_text,
+    remove_stop_words,
+    singularize_text,
+    stem_text,
+    vectorize_text,
+)
 
 
 def inference_naive_bayes(
@@ -69,9 +74,7 @@ def inference_naive_bayes(
             # initialize a column for predictions for this iteration and split
             df[f"preds_NB_{i_iter + 1}_{i_split + 1}"] = preds
             # print sub result
-            print_progress(
-                df, f"preds_NB_{i_iter + 1}_{i_split + 1}", class_col
-            )
+            print_progress(df, f"preds_NB_{i_iter + 1}_{i_split + 1}", class_col)
 
     # get the final prediction: the mode of all the predications
     cols = [
@@ -79,9 +82,7 @@ def inference_naive_bayes(
         for i_iter in range(n_iter)
         for i_split in range(n_splits)
     ]
-    df[f"preds_NB_final"] = df[cols].apply(
-        lambda x: scipy.stats.mode(x)[0][0], axis=1
-    )
+    df[f"preds_NB_final"] = df[cols].apply(lambda x: scipy.stats.mode(x)[0][0], axis=1)
     # print final result
     print_progress(df, f"preds_NB_final", class_col)
     return df
