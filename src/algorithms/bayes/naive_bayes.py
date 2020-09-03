@@ -2,7 +2,7 @@
 
 import copy
 import pickle
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
@@ -24,57 +24,47 @@ class NaiveBayes:
     """Naive Bayes classifier
 
     Args:
-        alpha: additive smoothing parameter, 0 for no smoothing
-        n_splits: number of splits to use for cross-validation
-        n_iter: number of times the cross-validation is repeatted
-        upsample: upsample the train data (True), downsample (False), or neither (None)
-        use_stop_words: use stop words in the fit/predications
-        use_lemmatizer: lemmatize the lines
-        use_stemmer: stem the lines. If a lemmatizer is used, this is not used
-        use_singularizer: singularize the words in each line
-        tf_idf: use tf-idf vectorizer
+        config: configuration for training, can contain the following.
+                  - alpha: additive smoothing parameter, 0 for no smoothing -> [0.3]
+                  - n_splits: number of splits to use for cross-validation -> [5]
+                  - n_iter: number of times the cross-validation is repeatted -> [5]
+                  - upsample: upsample the train data (True), downsample (False), or
+                              neither (None) -> [None]
+                  - use_stop_words: use stop words in the fit/predications -> [True]
+                  - use_lemmatizer: lemmatize the lines -> [False]
+                  - use_stemmer: stem the lines. If a lemmatizer is used,
+                                 this is not used -> [False]
+                  - use_singularizer: singularize the words in each line -> [False]
+                  - tf_idf: use tf-idf vectorizer -> [False]
+                If these values are not present, default values (in square brakets) are used.
 
     Attributes:
-        config: configuration for training
-                - alpha: additive smoothing parameter, 0 for no smoothing
-                - n_splits: number of splits to use for cross-validation
-                - n_iter: number of times the cross-validation is repeatted
-                - upsample: upsample the train data (True), downsample (False), or neither (None)
-                - use_stop_words: use stop words in the fit/predications
-                - use_lemmatizer: lemmatize the lines
-                - use_stemmer: stem the lines. If a lemmatizer is used, this is not used
-                - use_singularizer: singularize the words in each line
-                - tf_idf: use tf-idf vectorizer
+        config: configuration for training.
         stop_words: list of stop words that are to be removed
         fitted_models: tuple of fitted models used for later inference. Contains:
                        - vectorizers fitted to the: 0
                        - classifiers used to fit the data: 1
     """
 
-    def __init__(
-        self,
-        alpha: float = 0.3,
-        n_splits: int = 5,
-        n_iter: int = 5,
-        upsample: bool = None,
-        use_stop_words: bool = True,
-        use_lemmatizer: bool = False,
-        use_stemmer: bool = False,
-        use_singularizer: bool = False,
-        tf_idf: bool = False,
-    ) -> None:
+    def __init__(self, config: Dict = {}) -> None:
         """Class Initializer."""
-        # make the config
-        self.config = {}
-        self.config["alpha"] = alpha
-        self.config["n_splits"] = n_splits
-        self.config["n_iter"] = n_iter
-        self.config["upsample"] = upsample
-        self.config["use_stop_words"] = use_stop_words
-        self.config["use_lemmatizer"] = use_lemmatizer
-        self.config["use_stemmer"] = use_stemmer
-        self.config["use_singularizer"] = use_singularizer
-        self.config["tf_idf"] = tf_idf
+        # Default config
+        self.config = {
+            "alpha": 0.3,
+            "n_splits": 5,
+            "n_iter": 5,
+            "upsample": None,
+            "use_stop_words": True,
+            "use_lemmatizer": False,
+            "use_stemmer": False,
+            "use_singularizer": False,
+            "tf_idf": False
+        }
+        # update the config with user provided values
+        self.config.update(config)
+        # initialize empty fitted_models
+        self.fitted_models = ()
+        
 
     def train(self, samples: np.array, labels: np.array, verbose: int = 1,) -> np.array:
         """
@@ -191,6 +181,8 @@ class NaiveBayes:
         Returns:
             df: dataframe with predictions from fitted models
         """
+        # check that the model has been trained
+        assert self.fitted_models, "Train model first: use train method or restore previous model"
 
         # make a dataframe from the data
         if labels is not None:
